@@ -11,6 +11,7 @@ tasks:
           action: "pull_request"
           login: ${event.pull_request.user.login}
           ref: ${event.pull_request.head.ref}
+          sha: ${event.pull_request.head.sha}
           clone_url: ${event.pull_request.head.repo.clone_url}
         else:
           action:
@@ -19,6 +20,7 @@ tasks:
             else: "push"
           login: ${event.pusher.name}
           ref: ${event.ref}
+          sha: ${event.after}
           clone_url: ${event.repository.clone_url}
   in:
     $let:
@@ -68,7 +70,7 @@ tasks:
                 GITHUB_HEAD_REPO_URL=${metadata.github.clone_url} \
                 GITHUB_HEAD_BRANCH=${metadata.github.ref} \
                 GITHUB_HEAD_REF=${metadata.github.ref} \
-                GITHUB_HEAD_SHA=${metadata.github.ref}
+                GITHUB_HEAD_SHA=${metadata.github.sha}
           artifacts:
             "public":
               type: "directory"
