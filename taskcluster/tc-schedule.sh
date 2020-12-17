@@ -1,6 +1,10 @@
 #!/bin/bash
-
 set -ex
+
+# Set environment variables passed in arguments
+for line in $@; do
+  eval "$line"
+done
 
 curdir=$(dirname "$0")/
 
