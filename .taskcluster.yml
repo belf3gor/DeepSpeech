@@ -8,10 +8,15 @@ tasks:
       github:
         $if: 'tasks_for == "github-pull-request"'
         then:
+          action: "pull_request"
           login: ${event.pull_request.user.login}
           ref: ${event.pull_request.head.ref}
           clone_url: ${event.pull_request.head.repo.clone_url}
         else:
+          action:
+            $if: 'event.ref[:10] == "refs/tags/"'
+            then: "tag"
+            else: "push"
           login: ${event.pusher.name}
           ref: ${event.ref}
           clone_url: ${event.repository.clone_url}
@@ -59,7 +64,7 @@ tasks:
                 TASK_ID=${metadata.task_id} \
                 GITHUB_HEAD_USER_LOGIN=${metadata.github.login} \
                 GITHUB_HEAD_USER_EMAIL=${metadata.github.login}@users.noreply.github.com \
-                GITHUB_EVENT=${event.action} \
+                GITHUB_EVENT=${metadata.github.action} \
                 GITHUB_HEAD_REPO_URL=${metadata.github.clone_url} \
                 GITHUB_HEAD_BRANCH=${metadata.github.ref} \
                 GITHUB_HEAD_REF=${metadata.github.ref} \
