@@ -5,7 +5,9 @@ tasks:
   $match:
     # Decision task for pull requests
     'tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"]':
-      taskId: {$eval: as_slugid("decision_task_pr")}
+      taskId: {$eval: as_slugid("decision_task")}
+      created: {$fromNow: ''}
+      deadline: {$fromNow: '60 minutes'}
 
       provisionerId: "proj-deepspeech"
       workerType: "ci-decision-task"
@@ -41,6 +43,7 @@ tasks:
             echo -e "#!/bin/bash\nset -xe\nenv && id && mkdir ~/DeepSpeech/ && git clone --quiet ${event.pull_request.head.repo.clone_url} ~/DeepSpeech/ds/ && cd ~/DeepSpeech/ds && git checkout --quiet {{event.head.sha}}" > /tmp/clone.sh && chmod +x /tmp/clone.sh &&
             sudo -H -u build-user /bin/bash /tmp/clone.sh &&
             sudo -H -u build-user --preserve-env /bin/bash /home/build-user/DeepSpeech/ds/taskcluster/tc-schedule.sh \
+              TASK_ID={$eval: as_slugid("decision_task")}
               GITHUB_HEAD_USER_LOGIN=${event.pull_request.user.login} \
               GITHUB_EVENT=${event.action} \
               GITHUB_HEAD_REPO_URL=${event.pull_request.head.repo.clone_url} \
@@ -61,7 +64,9 @@ tasks:
 
     # Decision task for pushes to master
     'tasks_for == "github-push" && event.ref == "refs/heads/master"':
-      taskId: {$eval: as_slugid("decision_task_push")}
+      taskId: {$eval: as_slugid("decision_task")}
+      created: {$fromNow: ''}
+      deadline: {$fromNow: '60 minutes'}
 
       provisionerId: "proj-deepspeech"
       workerType: "ci-decision-task"
@@ -97,6 +102,7 @@ tasks:
             echo -e "#!/bin/bash\nset -xe\nenv && id && mkdir ~/DeepSpeech/ && git clone --quiet {{event.head.repo.url}} ~/DeepSpeech/ds/ && cd ~/DeepSpeech/ds && git checkout --quiet {{event.head.sha}}" > /tmp/clone.sh && chmod +x /tmp/clone.sh &&
             sudo -H -u build-user /bin/bash /tmp/clone.sh &&
             sudo -H -u build-user --preserve-env /bin/bash /home/build-user/DeepSpeech/ds/taskcluster/tc-schedule.sh \
+              TASK_ID={$eval: as_slugid("decision_task")} \
               GITHUB_HEAD_USER_LOGIN=${event.pusher.name} \
               GITHUB_EVENT=${event.action} \
               GITHUB_HEAD_REPO_URL=${event.repository.clone_url} \
@@ -116,7 +122,9 @@ tasks:
 
     # Decision task for tag push
     'tasks_for == "github-push" && event.ref[:10] == "refs/tags/"':
-      taskId: {$eval: as_slugid("decision_task_tag")}
+      taskId: {$eval: as_slugid("decision_task")}
+      created: {$fromNow: ''}
+      deadline: {$fromNow: '60 minutes'}
 
       provisionerId: "proj-deepspeech"
       workerType: "ci-decision-task"
@@ -152,6 +160,7 @@ tasks:
             echo -e "#!/bin/bash\nset -xe\nenv && id && mkdir ~/DeepSpeech/ && git clone --quiet {{event.head.repo.url}} ~/DeepSpeech/ds/ && cd ~/DeepSpeech/ds && git checkout --quiet {{event.head.sha}}" > /tmp/clone.sh && chmod +x /tmp/clone.sh &&
             sudo -H -u build-user /bin/bash /tmp/clone.sh &&
             sudo -H -u build-user --preserve-env /bin/bash /home/build-user/DeepSpeech/ds/taskcluster/tc-schedule.sh \
+              TASK_ID={$eval: as_slugid("decision_task")} \
               GITHUB_HEAD_USER_LOGIN=${event.pusher.name} \
               GITHUB_EVENT=${event.action} \
               GITHUB_HEAD_REPO_URL=${event.repository.clone_url} \
