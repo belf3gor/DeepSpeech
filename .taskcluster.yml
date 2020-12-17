@@ -8,7 +8,7 @@ tasks:
       github:
         $if: 'tasks_for == "github-pull-request"'
         then:
-          action: "pull_request"
+          action: "pull_request.${event.action}"
           login: ${event.pull_request.user.login}
           ref: ${event.pull_request.head.ref}
           sha: ${event.pull_request.head.sha}
