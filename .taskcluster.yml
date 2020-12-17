@@ -54,7 +54,7 @@ tasks:
           "public":
             type: "directory"
             path: "/tmp/artifacts/"
-            expires: ${fromNow: '7 days'}
+            expires: {$fromNow: '7 days'}
 
       metadata:
         name: "DeepSpeech PR decision task"
@@ -113,7 +113,7 @@ tasks:
           "public":
             type: "directory"
             path: "/tmp/artifacts/"
-            expires: ${fromNow: '7 days'}
+            expires: {$fromNow: '7 days'}
       metadata:
         name: "DeepSpeech push decision task"
         description: "DeepSpeech push decision task"
@@ -171,7 +171,7 @@ tasks:
           "public":
             type: "directory"
             path: "/tmp/artifacts/"
-            expires: ${fromNow: '7 days'}
+            expires: {$fromNow: '7 days'}
       metadata:
         name: "DeepSpeech push decision task"
         description: "DeepSpeech push decision task"
